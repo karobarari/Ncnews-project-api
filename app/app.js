@@ -7,7 +7,7 @@ const app = express();
 
 
 
-app.get('/api/:topics', getAllTopics);
+app.get('/api/topics', getAllTopics);
 
 
 app.use(handleNotFoundError);

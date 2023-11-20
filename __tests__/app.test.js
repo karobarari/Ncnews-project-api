@@ -25,9 +25,9 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then((response) => {
-        const {body} = response
-        expect(body).toHaveLength(3)
-        body.forEach(topic=>{
+        const { topics } = response.body
+        expect(topics).toHaveLength(3)
+        topics.forEach(topic=>{
           expect(topic).toMatchObject({
             slug : expect.any(String),
             description : expect.any(String)

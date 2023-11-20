@@ -1,9 +1,9 @@
 const db = require("../db/connection");
 
-exports.selectTopics = (table) => {
+exports.selectTopics = () => {
   let queryString = `
   SELECT *
-  FROM ${table};`;
+  FROM topics;`;
 
   return db.query(queryString).then((result) => {
     return result.rows;
