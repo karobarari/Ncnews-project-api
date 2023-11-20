@@ -1,9 +1,9 @@
-
 const { selectTopics } = require('./app.models')
 
 
 exports.getAllTopics = ( req,res,next)=>{
-    selectTopics().then((topics)=>{
+   const  {topics}  = req.params
+     selectTopics(`${topics}`).then((topics)=>{
         res.status(200).send(topics);
     }).catch(next)
 }
