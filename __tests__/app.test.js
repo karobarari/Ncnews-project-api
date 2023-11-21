@@ -20,21 +20,41 @@ describe("GET /api/topics", () => {
     return request(app).get("/api/topics").expect(200);
   });
 
-  test("getting all topics", () => {
+  test("GET 200:getting all topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
       .then((response) => {
-        const { topics } = response.body
-        expect(topics).toHaveLength(3)
-        topics.forEach(topic=>{
+        const { topics } = response.body;
+        expect(topics).toHaveLength(3);
+        topics.forEach((topic) => {
           expect(topic).toMatchObject({
-            slug : expect.any(String),
-            description : expect.any(String)
-          })
-
-        })
-        
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
+      });
+  });
+});
+describe("GET /api", () => {
+  test("GET 200: be available on /api", () => {
+    return request(app).get("/api").expect(200);
+  });
+  test("provide a description of all other endpoints available", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("GET /api");
+        expect(body).toHaveProperty("GET /api/topics");
+        expect(body["GET /api"]).toMatchObject({
+          description: expect.any(String),
+        });
+        expect(body["GET /api/topics"]).toMatchObject({
+          description: expect.any(String),
+          queries: expect.any(Array),
+          exampleResponse: expect.any(Object),
+        });
       });
   });
 });

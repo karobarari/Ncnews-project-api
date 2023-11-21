@@ -1,12 +1,12 @@
 const express = require("express");
-const { getAllTopics } = require('./app.controllers')
+const { getAllTopics, apiDescription } = require('./app.controllers')
 const { handleNotFoundError, handleServerErrors } = require('./errors')
 
 const app = express();
 
 
 
-
+app.get("/api", apiDescription);
 app.get('/api/topics', getAllTopics);
 
 
