@@ -58,3 +58,42 @@ describe("GET /api", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id", () => {
+  test("should be available on /api/articles/:article_id", () => {
+    return request(app).get("/api/articles/1").expect(200);
+  });
+  test("should response with an article object, which should have the expected properties", () => {
+    return request(app)
+      .get("/api/articles/4")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("status:400, responds with an error message when passed a bad user ID", () => {
+    return request(app)
+      .get("/api/articles/notAnID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when user id does not exist", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body,'---------------------');
+        expect(body.msg).toBe("not found!");
+      });
+  });
+});
