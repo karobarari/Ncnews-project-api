@@ -20,6 +20,32 @@ exports.selectTopics = () => {
   FROM topics;`;
 
   return db.query(queryString).then((result) => {
+
+    return result.rows;
+  });
+};
+exports.selectArticlesById = (article_id) => {
+  let queryValue = [];
+  let queryString = `
+  SELECT *
+  FROM articles
+  WHERE article_id = $1;`;
+  if (article_id) {
+    queryValue.push(article_id);
+  }
+
+  return db.query(queryString, queryValue).then((result) => {
+    return result.rows[0];
+  });
+};
+
+
+exports.selectArticle = () => {
+  let queryString = `
+  SELECT *
+  FROM articles;`;
+
+  return db.query(queryString).then((result) => {
     return result.rows;
   });
 };
