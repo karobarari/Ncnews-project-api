@@ -23,3 +23,18 @@ exports.selectTopics = () => {
     return result.rows;
   });
 };
+exports.selectArticlesById = (article_id) => {
+  let queryValue = [];
+  let queryString = `
+  SELECT *
+  FROM articles
+  WHERE article_id = $1;`;
+  if (article_id) {
+    queryValue.push(article_id);
+  }
+
+  return db.query(queryString, queryValue).then((result) => {
+    return result.rows[0];
+  });
+};
+
