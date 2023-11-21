@@ -45,7 +45,6 @@ describe("GET /api", () => {
       .get("/api")
       .expect(200)
       .then(({ body }) => {
-        console.log(body,'---------------------');
         expect(body).toHaveProperty("GET /api");
         expect(body).toHaveProperty("GET /api/topics");
         expect(body["GET /api"]).toMatchObject({
@@ -65,7 +64,7 @@ describe("GET /api/articles/:article_id", () => {
   });
   test("should response with an article object, which should have the expected properties", () => {
     return request(app)
-      .get("/api/articles/1")
+      .get("/api/articles/4")
       .expect(200)
       .then(({ body }) => {
         expect(body).toMatchObject({

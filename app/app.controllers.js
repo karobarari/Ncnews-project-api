@@ -29,5 +29,6 @@ exports.getArticleById = (req, res, next) => {
     .then((article) => {
       res.status(200).send(article);
     })
-    .catch(next);
+    .catch(next)
+    ;
 };
