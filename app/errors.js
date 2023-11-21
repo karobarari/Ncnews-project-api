@@ -6,7 +6,7 @@ exports.handleNotFoundError = (err, req, res, next)=>{
 exports.handleInvalidParamError = (err, req, res, next)=>{
  if (err.code==='22P02') {
   console.log(err.code,'---------------------');
-   res.status(400).send({ msg: 'bad request' });
+   res.status(400).send({ msg: "Invalid input" });
  } else next(err);   
 
 }

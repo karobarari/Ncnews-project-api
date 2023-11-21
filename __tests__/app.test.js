@@ -79,4 +79,21 @@ describe("GET /api/articles/:article_id", () => {
         });
       });
   });
+  test("status:400, responds with an error message when passed a bad user ID", () => {
+    return request(app)
+      .get("/api/articles/notAnID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when user id does not exist", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body,'---------------------');
+        expect(body.msg).toBe("not found!");
+      });
+  });
 });
