@@ -64,6 +64,7 @@ describe("GET /api/articles/:article_id", () => {
   });
   test("should response with an article object, which should have the expected properties", () => {
     return request(app)
+
       .get("/api/articles/4")
       .expect(200)
       .then(({ body }) => {
@@ -79,6 +80,40 @@ describe("GET /api/articles/:article_id", () => {
         });
       });
   });
+});
+describe("GET /api/articles", () => {
+  test("should be available on /api/articles", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+  test("should response with an articles array of article objects, each of which should have the expected properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(5);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("should respond with an articles array of article objects, each of which should be sorted by created_at in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", { descending: true });
   test("status:400, responds with an error message when passed a bad user ID", () => {
     return request(app)
       .get("/api/articles/notAnID")
@@ -92,7 +127,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/9999")
       .expect(404)
       .then(({ body }) => {
-        console.log(body,'---------------------');
         expect(body.msg).toBe("not found!");
       });
   });

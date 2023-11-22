@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getAllTopics,
   apiDescription,
+  getArticle,
   getArticleById,
 } = require("./app.controllers");
 const {
@@ -15,6 +16,9 @@ const app = express();
 app.get("/api", apiDescription);
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles", getArticle);
+
+
 
 
 app.use(handleNotFoundError);
