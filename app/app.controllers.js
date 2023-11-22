@@ -26,19 +26,17 @@ exports.getAllTopics = ( req,res,next)=>{
 
 
 exports.getArticle = (req, res, next) => {
-
-
-  if (Object.keys(req.params).length === 0) {
 selectArticle()
       .then((articles) => {
         res.status(200).send({ articles });
       })
       .catch(next);
   }
- const { article_id } = req.params;
+  exports.getArticleById = (req, res, next) => {
+    const { article_id } = req.params;
     selectArticlesById(article_id)
       .then((article) => {
         res.status(200).send(article);
       })
       .catch(next);
-}; 
+  }; 
