@@ -64,7 +64,8 @@ describe("GET /api/articles/:article_id", () => {
   });
   test("should response with an article object, which should have the expected properties", () => {
     return request(app)
-      .get("/api/articles/1")
+
+      .get("/api/articles/4")
       .expect(200)
       .then(({ body }) => {
         expect(body).toMatchObject({
@@ -113,6 +114,20 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSortedBy("created_at", { descending: true });
+  test("status:400, responds with an error message when passed a bad user ID", () => {
+    return request(app)
+      .get("/api/articles/notAnID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when user id does not exist", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
       });
   });
 });

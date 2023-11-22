@@ -5,7 +5,11 @@ const {
   getArticle,
   getArticleById,
 } = require("./app.controllers");
-const { handleNotFoundError, handleServerErrors } = require("./errors");
+const {
+  handleNotFoundError,
+  handleServerErrors,
+  handleInvalidParamError,
+} = require("./errors");
 
 const app = express();
 
@@ -16,8 +20,10 @@ app.get("/api/articles", getArticle);
 
 
 
+
 app.use(handleNotFoundError);
-app.use(handleServerErrors); //last in the order
+app.use(handleInvalidParamError);
+app.use(handleServerErrors);//last in the order
 
 app.listen(9090);
 module.exports = app;
