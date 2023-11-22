@@ -1,6 +1,5 @@
 const db = require("../db/connection");
-const fs = require("fs")
-
+const fs = require("fs");
 
 exports.readEndpoints = (callback) => {
   fs.readFile(`${__dirname}/../endpoints.json`, "utf-8", (err, data) => {
@@ -13,14 +12,12 @@ exports.readEndpoints = (callback) => {
   });
 };
 
-
 exports.selectTopics = () => {
   let queryString = `
   SELECT *
   FROM topics;`;
 
   return db.query(queryString).then((result) => {
-
     return result.rows;
   });
 };
@@ -38,7 +35,6 @@ exports.selectArticlesById = (article_id) => {
     return result.rows[0];
   });
 };
-
 
 exports.selectArticle = () => {
   const queryString = `
@@ -72,10 +68,27 @@ exports.selectArticlesById = (article_id) => {
   }
 
   return db.query(queryString, queryValue).then((result) => {
-    if(result.rows.length === 0){
-      return Promise.reject({status: 404, msg: 'not found'})
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found" });
     }
-return result.rows[0];
+    return result.rows[0];
   });
 };
 
+exports.selectComment = (article_id) => {
+  queryString = `SELECT * FROM comments`;
+  queryValue = [];
+
+  if (article_id) {
+    queryString += ` WHERE article_id = ${article_id} 
+    ORDER BY created_at ASC
+`;
+  }
+
+  return db.query(queryString).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return result.rows;
+  });
+};

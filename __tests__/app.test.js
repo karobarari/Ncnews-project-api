@@ -96,6 +96,7 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
 describe("GET /api/articles", () => {
   test("should be available on /api/articles", () => {
     return request(app).get("/api/articles").expect(200);
@@ -129,6 +130,47 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSortedBy("created_at", { descending: true });
+
       });
   });
 });
+describe("GET /api/articles/:article_id/comments", () => {
+  test("should be available on /api/articles/:article_id/comments", () => {
+    return request(app).get("/api/articles/1/comments").expect(200);
+  });
+  test("should response with an array of comments for the given article_id of which each comment should have the expected properties", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveLength(11);
+        expect(body).toBeSortedBy("created_at");
+      });
+  });
+  test("should response with an array of comments for the given article_id of which each comment should have the expected properties", () => {
+    return request(app)
+      .get("/api/articles/9/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveLength(2);
+        expect(body).toBeSortedBy("created_at");
+      });
+  });
+  test("status:400, responds with an error message when passed a bad user ID", () => {
+    return request(app)
+      .get("/api/articles/notAnID/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test.only("status:404, responds with an error message when user id does not exist", () => {
+    return request(app)
+      .get("/api/articles/9999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+});
+
