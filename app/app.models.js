@@ -75,13 +75,13 @@ exports.selectArticlesById = (article_id) => {
   });
 };
 
-exports.selectComment = (article_id) => {
+exports.selectComment = (article_id, order = "ASC", sort_by = "created_at") => {
   queryString = `SELECT * FROM comments`;
   queryValue = [];
 
   if (article_id) {
     queryString += ` WHERE article_id = ${article_id} 
-    ORDER BY created_at ASC
+    ORDER BY ${sort_by} ${order}
 `;
   }
 

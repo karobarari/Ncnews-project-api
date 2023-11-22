@@ -143,8 +143,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toHaveLength(11);
-        expect(body).toBeSortedBy("created_at");
+       const { article } = body;
+       expect(article).toHaveLength(11);
+       expect(article).toBeSortedBy("created_at");
       });
   });
   test("should response with an array of comments for the given article_id of which each comment should have the expected properties", () => {
@@ -152,8 +153,10 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/9/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toHaveLength(2);
-        expect(body).toBeSortedBy("created_at");
+        console.log(body,'---------------------');
+        const { article } = body
+        expect(article).toHaveLength(2);
+        expect(article).toBeSortedBy("created_at");
       });
   });
   test("status:400, responds with an error message when passed a bad user ID", () => {
@@ -164,7 +167,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test.only("status:404, responds with an error message when user id does not exist", () => {
+  test("status:404, responds with an error message when user id does not exist", () => {
     return request(app)
       .get("/api/articles/9999/comments")
       .expect(404)
