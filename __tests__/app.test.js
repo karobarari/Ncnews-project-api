@@ -218,13 +218,40 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("status:400, responds with an error message when passed a unknown user ID", () => {
+  test("status:404, responds with an error message when passed a unknown user ID", () => {
     const newComment = {
       username: "Karo",
       body: "testing comment",
     };
     return request(app)
       .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+  test("status:404, responds with an error message when passed a non existent article id", () => {
+    const newComment = {
+      username: "Karo",
+      body: "testing comment",
+    };
+    return request(app)
+      .post("/api/articles/1000/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+
+  test("status:400, responds with an error message when passed bad article request", () => {
+    const newComment = {
+      username: "Karo",
+      body: "testing comment",
+    };
+    return request(app)
+      .post("/api/articles/bad_request/comments")
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
