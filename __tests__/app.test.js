@@ -195,7 +195,8 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
-        expect(body).toMatchObject({
+const {postedCm} = body
+        expect(postedCm).toMatchObject({
           comment_id: expect.any(Number),
           body: "testing comment",
           article_id: expect.any(Number),
@@ -233,7 +234,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
   test("status:404, responds with an error message when passed a non existent article id", () => {
     const newComment = {
-      username: "Karo",
+      username: "butter_bridge",
       body: "testing comment",
     };
     return request(app)

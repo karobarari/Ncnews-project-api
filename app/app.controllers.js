@@ -59,7 +59,7 @@ exports.postComment = (req, res, next) => {
   passedComment.article_id = params.article_id;
   createComment(passedComment)
     .then((postedCm) => {
-      res.status(201).send(postedCm);
+      res.status(201).send({postedCm});
     })
     .catch(next);
 };
