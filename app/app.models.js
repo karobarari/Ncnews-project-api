@@ -21,6 +21,39 @@ exports.selectTopics = () => {
     return result.rows;
   });
 };
+
+exports.selectArticle = (topic) => {
+  
+  const queryString = `
+    SELECT 
+      articles.author,
+      articles.title,
+      articles.article_id,
+      articles.topic,
+      articles.created_at,
+      articles.votes,
+      articles.article_img_url,
+      COUNT(comments.author) AS comment_count
+    FROM articles
+    JOIN comments ON articles.article_id = comments.article_id
+    ${topic ? "WHERE articles.topic = $1" : ""}
+    GROUP BY articles.article_id
+    ORDER BY created_at DESC
+  `;
+  const queryValue = [];
+  if (topic || typeof topic === 'string' ) {
+    `WHERE article.topic = $1 `;
+    queryValue.push(topic);
+  }
+
+  return db.query(queryString, queryValue).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404 });
+    }
+    return result.rows;
+  });
+};
+
 exports.selectArticlesById = (article_id) => {
   let queryValue = [];
   let queryString = `
@@ -36,27 +69,6 @@ exports.selectArticlesById = (article_id) => {
   });
 };
 
-exports.selectArticle = () => {
-  const queryString = `
-    SELECT 
-      articles.author,
-      articles.title,
-      articles.article_id,
-      articles.topic,
-      articles.created_at,
-      articles.votes,
-      articles.article_img_url,
-      COUNT(comments.author) AS comment_count
-    FROM articles
-    JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY created_at DESC
-  `;
-
-  return db.query(queryString).then((result) => {
-    return result.rows;
-  });
-};
 exports.selectArticlesById = (article_id) => {
   let queryValue = [];
   let queryString = `

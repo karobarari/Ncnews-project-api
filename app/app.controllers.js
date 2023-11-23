@@ -30,7 +30,8 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getArticle = (req, res, next) => {
-  selectArticle()
+  const { topic } = req.query;
+  selectArticle(topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
