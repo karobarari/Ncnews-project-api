@@ -6,6 +6,7 @@ const {
   getArticleById,
   getCommentsByArticle,
   postComment,
+  patchComment,
 } = require("./app.controllers");
 const {
   handleNotFoundError,
@@ -22,6 +23,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticle);
 app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 app.post("/api/articles/:article_id/comments", postComment);
+app.patch("/api/articles/:article_id", patchComment);
 
 app.use(handleNotFoundError);
 app.use(handleInvalidParamError);

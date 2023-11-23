@@ -260,3 +260,67 @@ const {postedCm} = body
       });
   });
 });
+describe("PATCH /api/articles/:article_id", () => {
+  test("should respond with 200", () => {
+    const newComment = {
+      inc_votes: 1,
+    };
+    return request(app)
+      .patch("/api/articles/1") // Use PATCH instead of POST
+      .send(newComment)
+      .expect(200);
+  });
+  test("should respond with the updated article", () => {
+    const newComment = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1") // Use PATCH instead of POST
+      .send(newComment)
+      .expect(200)
+      .then(( {body} ) => {
+        const {updatedArticle} = body
+        expect(updatedArticle).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: 101,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("status:400, responds with an error message when passed no update parameter", () => {
+    const newComment = {};
+    return request(app)
+      .patch("/api/articles/1") // Use PATCH instead of POST
+      .send(newComment)
+      .expect(400);
+  });
+  test("status:400, responds with an error message when passed NaN", () => {
+    const newComment = { inc_votes: "NotValid" };
+    return request(app)
+      .patch("/api/articles/1") //
+      .send(newComment)
+      .expect(400);
+  });
+  test("status:400, responds with an error message when passed a bad user ID", () => {
+    const newComment = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/NaN") // Use PATCH instead of POST
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when article id does not exist", () => {
+    const newComment = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/9999") // Use PATCH instead of POST
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+});
