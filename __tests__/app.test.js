@@ -277,7 +277,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newComment)
       .expect(200)
       .then(( {body} ) => {
-        expect(body).toMatchObject({
+        const {updatedArticle} = body
+        expect(updatedArticle).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),

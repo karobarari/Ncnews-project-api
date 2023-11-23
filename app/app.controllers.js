@@ -74,7 +74,7 @@ exports.patchComment = (req, res, next) => {
   // Call the correct function
   updateArticleVotes(passedComment)
     .then((updatedArticle) => {
-      res.status(200).send(updatedArticle);
+      res.status(200).send({updatedArticle});
     })
     .catch((err) => {
       next(err);
