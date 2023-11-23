@@ -5,6 +5,7 @@ const {
   selectArticlesById,
   selectComment,
   createComment,
+  updateArticleVotes,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -62,4 +63,20 @@ exports.postComment = (req, res, next) => {
       res.status(201).send({postedCm});
     })
     .catch(next);
+};
+
+exports.patchComment = (req, res, next) => {
+  const { body, params } = req;
+
+  const passedComment = body;
+  passedComment.article_id = params.article_id;
+
+  // Call the correct function
+  updateArticleVotes(passedComment)
+    .then((updatedArticle) => {
+      res.status(200).send(updatedArticle);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
