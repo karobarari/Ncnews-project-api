@@ -92,7 +92,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/9999")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
 });
@@ -170,7 +170,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/9999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
 });
@@ -229,7 +229,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
   test("status:404, responds with an error message when passed a non existent article id", () => {
@@ -242,7 +242,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
 
@@ -320,7 +320,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
 });
@@ -346,7 +346,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete(`/api/comments/${commentIdToDelete}`)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
 });
@@ -370,12 +370,49 @@ describe("GET /api/users", () => {
         });
       });
   });
-  test("status:404, responds with an error message when route does not exist", () => {
+});
+describe("GET /api/articles", () => {
+  test("should be available on /api/articles?topic=mitch", () => {
+    return request(app).get("/api/articles?topic=mitch").expect(200);
+  });
+  test("should respond with an array of article objects, each of which should have the expected properties", () => {
+    const validTopic = "mitch";
     return request(app)
-      .get("/api/u")
+      .get(`/api/articles?topic=${validTopic}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(4);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: validTopic,
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("status:400, responds with an error message when the topic does not exist", () => {
+    const nonExistingTopic = 888;
+    return request(app)
+      .get(`/api/articles?topic=${nonExistingTopic}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.error).toBe("bad request");
+      });
+  });
+  test("status:404, responds with an error message when articles does not exist", () => {
+    const topic = "paper";
+    return request(app)
+      .get(`/api/articles?topic=${topic}`)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found!");
+        expect(body.error).toBe("not found!");
       });
   });
 });

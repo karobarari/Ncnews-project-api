@@ -30,7 +30,8 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getArticle = (req, res, next) => {
-  selectArticle()
+  const { topic } = req.query;
+  selectArticle(topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -55,6 +56,7 @@ exports.getCommentsByArticle = (req, res, next) => {
       next(err);
     });
 };
+
 exports.postComment = (req, res, next) => {
   const { body, params } = req;
 
@@ -64,7 +66,9 @@ exports.postComment = (req, res, next) => {
     .then((postedCm) => {
       res.status(201).send({ postedCm });
     })
-    .catch(next);
+    .catch((err=>{
+      next(err)
+    }));
 };
 
 exports.patchComment = (req, res, next) => {
