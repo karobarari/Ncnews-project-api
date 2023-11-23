@@ -120,8 +120,8 @@ exports.updateArticleVotes = (comment) => {
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404 });
       }
-      return result.rows[0]; 
-    })
+      return result.rows[0];
+    });
 };
 
 exports.removeComment = (commentId) => {
@@ -138,4 +138,14 @@ exports.removeComment = (commentId) => {
       }
       return result.rows;
     });
+};
+
+exports.selectUsers = () => {
+  let queryString = `
+  SELECT *
+  FROM users;`;
+
+  return db.query(queryString).then((result) => {
+    return result.rows;
+  });
 };

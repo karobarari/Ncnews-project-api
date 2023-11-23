@@ -8,11 +8,13 @@ const {
   postComment,
   patchComment,
   deleteComment,
+  getUsers,
 } = require("./app.controllers");
 const {
   handleNotFoundError,
   handleServerErrors,
   handleInvalidParamError,
+  handleNotARouteError,
 } = require("./errors");
 
 const app = express();
@@ -26,6 +28,13 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 app.post("/api/articles/:article_id/comments", postComment);
 app.patch("/api/articles/:article_id", patchComment);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api/users", getUsers);
+
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  error.status = 404;
+  next(error);
+});
 
 app.use(handleNotFoundError);
 app.use(handleInvalidParamError);

@@ -195,7 +195,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
-const {postedCm} = body
+        const { postedCm } = body;
         expect(postedCm).toMatchObject({
           comment_id: expect.any(Number),
           body: "testing comment",
@@ -276,8 +276,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1") // Use PATCH instead of POST
       .send(newComment)
       .expect(200)
-      .then(( {body} ) => {
-        const {updatedArticle} = body
+      .then(({ body }) => {
+        const { updatedArticle } = body;
         expect(updatedArticle).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
@@ -344,6 +344,35 @@ describe("DELETE /api/comments/:comment_id", () => {
     const commentIdToDelete = 111111;
     return request(app)
       .delete(`/api/comments/${commentIdToDelete}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+});
+describe("GET /api/users", () => {
+  test("should be available on /api/users", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  test("should response with an articles array of users objects, each of which should have the expected properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("status:404, responds with an error message when route does not exist", () => {
+    return request(app)
+      .get("/api/u")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("not found!");

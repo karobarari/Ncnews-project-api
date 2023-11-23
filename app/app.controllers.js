@@ -6,7 +6,8 @@ const {
   selectComment,
   createComment,
   updateArticleVotes,
-  removeComment
+  removeComment,
+  selectUsers,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -61,7 +62,7 @@ exports.postComment = (req, res, next) => {
   passedComment.article_id = params.article_id;
   createComment(passedComment)
     .then((postedCm) => {
-      res.status(201).send({postedCm});
+      res.status(201).send({ postedCm });
     })
     .catch(next);
 };
@@ -75,7 +76,7 @@ exports.patchComment = (req, res, next) => {
   // Call the correct function
   updateArticleVotes(passedComment)
     .then((updatedArticle) => {
-      res.status(200).send({updatedArticle});
+      res.status(200).send({ updatedArticle });
     })
     .catch((err) => {
       next(err);
@@ -87,6 +88,14 @@ exports.deleteComment = (req, res, next) => {
   removeComment(comment_id)
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.getUsers = (req, res, next) => {
+  selectUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch(next);
 };
