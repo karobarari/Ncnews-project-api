@@ -6,6 +6,7 @@ const {
   selectComment,
   createComment,
   updateArticleVotes,
+  removeComment
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -79,4 +80,13 @@ exports.patchComment = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  removeComment(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
 };
