@@ -130,7 +130,6 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSortedBy("created_at", { descending: true });
-
       });
   });
 });
@@ -143,9 +142,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-       const { article } = body;
-       expect(article).toHaveLength(11);
-       expect(article).toBeSortedBy("created_at");
+        const { article } = body;
+        expect(article).toHaveLength(11);
+        expect(article).toBeSortedBy("created_at");
       });
   });
   test("should response with an array of comments for the given article_id of which each comment should have the expected properties", () => {
@@ -153,8 +152,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/9/comments")
       .expect(200)
       .then(({ body }) => {
-        console.log(body,'---------------------');
-        const { article } = body
+        const { article } = body;
         expect(article).toHaveLength(2);
         expect(article).toBeSortedBy("created_at");
       });
@@ -176,4 +174,61 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should respond with 201", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "testing comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201);
+  });
+  test("should respond the posted conmment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "testing comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "testing comment",
+          article_id: expect.any(Number),
+          author: "butter_bridge",
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
+      });
+  });
 
+  test("status:400, responds with an error message when passed no user ID or no comment body", () => {
+    const newComment = {
+      username: "butter_bridge",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:400, responds with an error message when passed a unknown user ID", () => {
+    const newComment = {
+      username: "Karo",
+      body: "testing comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+});

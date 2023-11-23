@@ -92,3 +92,16 @@ exports.selectComment = (article_id, order = "ASC", sort_by = "created_at") => {
     return result.rows;
   });
 };
+
+exports.createComment = (comment) => {
+  const { article_id, username, body } = comment;
+
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;`,
+      [article_id, username, body]
+    )
+    .then(({ rows: [comment] }) => {
+      return comment;
+    });
+};

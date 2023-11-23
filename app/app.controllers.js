@@ -4,6 +4,7 @@ const {
   selectArticle,
   selectArticlesById,
   selectComment,
+  createComment,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -45,8 +46,20 @@ exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
   selectComment(article_id)
     .then((article) => {
-      res.status(200).send({article});
-    }).catch((err=>{
-      next(err)
-    }));
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.postComment = (req, res, next) => {
+  const { body, params } = req;
+
+  const passedComment = body;
+  passedComment.article_id = params.article_id;
+  createComment(passedComment)
+    .then((postedCm) => {
+      res.status(201).send(postedCm);
+    })
+    .catch(next);
 };
