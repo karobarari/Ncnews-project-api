@@ -324,3 +324,29 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe("DELETE /api/comments/:comment_id", () => {
+  test("should delete the given comment by comment_id and respond with status 204 and no content", () => {
+    const commentIdToDelete = 1;
+    return request(app)
+      .delete(`/api/comments/${commentIdToDelete}`)
+      .expect(204);
+  });
+  test("status:400, responds with an error message when passed a bad comment ID", () => {
+    const commentIdToDelete = "NaN";
+    return request(app)
+      .delete(`/api/comments/${commentIdToDelete}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when comment id does not exist", () => {
+    const commentIdToDelete = 111111;
+    return request(app)
+      .delete(`/api/comments/${commentIdToDelete}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+});
