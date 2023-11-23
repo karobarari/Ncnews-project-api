@@ -69,7 +69,7 @@ exports.selectArticlesById = (article_id) => {
 
   return db.query(queryString, queryValue).then((result) => {
     if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "not found" });
+      return Promise.reject({ status: 404 });
     }
     return result.rows[0];
   });
@@ -87,8 +87,21 @@ exports.selectComment = (article_id, order = "ASC", sort_by = "created_at") => {
 
   return db.query(queryString).then((result) => {
     if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "not found" });
+      return Promise.reject({ status: 404 });
     }
     return result.rows;
   });
+};
+
+exports.createComment = (comment) => {
+  const { article_id, username, body } = comment;
+
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;`,
+      [article_id, username, body]
+    )
+    .then(({ rows: [comment] }) => {
+      return comment;
+    })
 };
