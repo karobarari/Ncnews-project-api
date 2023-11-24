@@ -22,10 +22,10 @@ exports.selectTopics = () => {
   });
 };
 exports.selectArticle = (topic) => {
-  const validTopics = ['mitch', 'cats', 'paper']
+  const validTopics = ["mitch", "cats", "paper"];
 
   if (topic && !validTopics.includes(topic)) {
-    return Promise.reject({status: 400 , msg: 'bad request'})
+    return Promise.reject({ status: 400, msg: "bad request" });
   }
   let queryString = `
     SELECT 
@@ -53,17 +53,13 @@ exports.selectArticle = (topic) => {
     ORDER BY created_at DESC
   `;
 
-  return db
-    .query(queryString, queryValues)
-    .then((result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "not found!" });
-      }
-      return result.rows;
-    })
+  return db.query(queryString, queryValues).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found!" });
+    }
+    return result.rows;
+  });
 };
-
-
 
 exports.selectArticlesById = (article_id) => {
   let queryValue = [];
@@ -79,20 +75,20 @@ exports.selectArticlesById = (article_id) => {
     return result.rows[0];
   });
 };
-
 exports.selectArticlesById = (article_id) => {
-  let queryValue = [];
-  let queryString = `
-  SELECT *
-  FROM articles
-  WHERE article_id = $1;`;
-  if (article_id) {
-    queryValue.push(article_id);
-  }
+  const queryValue = [article_id];
+  const queryString = `
+    SELECT articles.*, COUNT(comments.author) AS comment_count
+    FROM articles
+    JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id
+
+  `;
 
   return db.query(queryString, queryValue).then((result) => {
     if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "not found!" });
+      return Promise.reject({ status: 404, msg: "not found!" });
     }
     return result.rows[0];
   });
@@ -110,7 +106,7 @@ exports.selectComment = (article_id, order = "ASC", sort_by = "created_at") => {
 
   return db.query(queryString).then((result) => {
     if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "not found!" });
+      return Promise.reject({ status: 404, msg: "not found!" });
     }
     return result.rows;
   });
