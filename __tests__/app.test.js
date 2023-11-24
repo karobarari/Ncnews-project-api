@@ -77,7 +77,6 @@ describe("GET /api/articles/:article_id", () => {
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
-          comment_count: expect.any(String),
         });
       });
   });
@@ -97,6 +96,25 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.error).toBe("not found!");
       });
   });
+   test("should response with an article object, which should have the expected properties and comment count", () => {
+     return request(app)
+       .get("/api/articles/1")
+       .expect(200)
+       .then(({ body }) => {
+         const { article } = body;
+         expect(article).toMatchObject({
+           article_id: expect.any(Number),
+           title: expect.any(String),
+           topic: expect.any(String),
+           author: expect.any(String),
+           body: expect.any(String),
+           created_at: expect.any(String),
+           votes: expect.any(Number),
+           article_img_url: expect.any(String),
+           comment_count: expect.any(String),
+         });
+       });
+   });
 });
 
 describe("GET /api/articles", () => {
@@ -131,27 +149,6 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeSortedBy("created_at", { descending: true });
-      });
-  });
-  test("should response with an articles array of article objects, each of which should have the expected properties and comment count", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body }) => {
-        const { articles } = body;
-        expect(articles).toHaveLength(5);
-        articles.forEach((article) => {
-          expect(article).toMatchObject({
-            article_id: expect.any(Number),
-            title: expect.any(String),
-            topic: expect.any(String),
-            author: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-            comment_count: expect.any(String),
-          });
-        });
       });
   });
 });
