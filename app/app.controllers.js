@@ -8,6 +8,7 @@ const {
   updateArticleVotes,
   removeComment,
   selectUsers,
+  selectUserByUsername,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -102,4 +103,14 @@ exports.getUsers = (req, res, next) => {
       res.status(200).send({ users });
     })
     .catch(next);
+};
+exports.getUserByUsername = (req, res, next) => {
+  
+  const { username } = req.params;
+  selectUserByUsername(username).then((user) => {
+    res.status(200).send({user});
+  }).catch((err)=>{
+    console.log(err,'---------------------');
+    next(err)
+  })
 };

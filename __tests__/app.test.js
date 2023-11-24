@@ -55,7 +55,7 @@ describe("GET /api", () => {
         expect(body).toHaveProperty("PATCH /api/articles/:article_id");
         expect(body).toHaveProperty("DELETE /api/comments/:comment_id");
         expect(body).toHaveProperty("GET /api/users");
-
+        expect(body).toHaveProperty("GET /api/users/:username");
         expect(body["GET /api"]).toMatchObject({
           description: expect.any(String),
         });
@@ -84,7 +84,7 @@ describe("GET /api/articles/:article_id", () => {
         });
       });
   });
-  test("status:400, responds with an error message when passed a bad user ID", () => {
+  test("status:400, responds with an error message when passed a bad article ID", () => {
     return request(app)
       .get("/api/articles/notAnID")
       .expect(400)
@@ -92,7 +92,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("status:404, responds with an error message when user id does not exist", () => {
+  test("status:404, responds with an error message when article id does not exist", () => {
     return request(app)
       .get("/api/articles/9999")
       .expect(404)
@@ -469,6 +469,32 @@ describe("GET /api/articles (sorting queries)", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid input");
+      });
+  });
+});
+describe("GET /api/users/:username", () => {
+  test("be available on /api/users/:username", () => {
+    return request(app).get("/api/users/icellusedkars").expect(200);
+  });
+  test("be available on /api/users/:username", () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toMatchObject({
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String),
+        });
+      });
+  });
+  test("status:404, responds with an error message when user id does not exist", () => {
+    return request(app)
+      .get("/api/users/noSuchUsername")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.error).toBe("not found!");
       });
   });
 });
