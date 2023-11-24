@@ -1,15 +1,10 @@
 const express = require("express");
-const {
-  getAllTopics,
-  apiDescription,
-  getArticle,
-  getArticleById,
-  getCommentsByArticle,
-  postComment,
-  patchComment,
-  deleteComment,
-  getUsers,
-} = require("./app.controllers");
+const articlesRouter = require("./Router/articlesRouter");
+const topicRouter = require("./Router/topicRouter");
+const commentsRouter = require("./Router/commentsRouter");
+const usersRouter = require("./Router/usersRouter");
+const apiDescriptionRouter = require("./Router/apiDescribtionRouter");
+
 const {
   handleNotFoundError,
   handleServerErrors,
@@ -20,22 +15,15 @@ const {
 const app = express();
 app.use(express.json());
 
-app.get("/api", apiDescription);
-app.get("/api/topics", getAllTopics);
-app.get("/api/articles/:article_id", getArticleById);
-app.get("/api/articles", getArticle);
-app.get("/api/articles/:article_id/comments", getCommentsByArticle);
-app.post("/api/articles/:article_id/comments", postComment);
-app.patch("/api/articles/:article_id", patchComment);
-app.delete("/api/comments/:comment_id", deleteComment);
-app.get("/api/users", getUsers);
+app.use("/api/articles", articlesRouter);
+app.use("/api/topics", topicRouter);
+app.use("/api/comments", commentsRouter);
+app.use("/api/users", usersRouter);
+app.use("/api", apiDescriptionRouter);
 
-app.use((req, res, next) => {
-  const error = new Error("Not Found");
-  error.status = 404;
-  next(error);
-});
 
+
+app.use(handleNotARouteError);
 app.use(handleNotFoundError);
 app.use(handleInvalidParamError);
 app.use(handleServerErrors); //last in the order

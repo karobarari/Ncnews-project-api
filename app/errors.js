@@ -1,5 +1,5 @@
 exports.handleNotARouteError = (req, res, next) => {
-  const error = new Error("Not Found");
+  const error = new Error("Route not valid");
   error.status = 404;
   next(error);
 };
@@ -26,9 +26,4 @@ exports.handleInvalidParamError = (err, req, res, next) => {
 
 exports.handleServerErrors = (err, req, res, next) => {
   res.status(500).send({ msg: "Internal Server Error!" });
-};
-exports.handleNotARouteError = (req, res, next) => {
-  return (error = new Error("Not a route").then(() => {
-    error.status = 404;
-  }));
 };

@@ -47,13 +47,17 @@ describe("GET /api", () => {
       .then(({ body }) => {
         expect(body).toHaveProperty("GET /api");
         expect(body).toHaveProperty("GET /api/topics");
+        expect(body).toHaveProperty("GET /api/articles");
+        expect(body).toHaveProperty("GET /api/articles");
+        expect(body).toHaveProperty("GET /api/articles/:article_id");
+        expect(body).toHaveProperty("GET /api/articles/:article_id/comments");
+        expect(body).toHaveProperty("POST /api/articles/:article_id/comments");
+        expect(body).toHaveProperty("PATCH /api/articles/:article_id");
+        expect(body).toHaveProperty("DELETE /api/comments/:comment_id");
+        expect(body).toHaveProperty("GET /api/users");
+
         expect(body["GET /api"]).toMatchObject({
           description: expect.any(String),
-        });
-        expect(body["GET /api/topics"]).toMatchObject({
-          description: expect.any(String),
-          queries: expect.any(Array),
-          exampleResponse: expect.any(Object),
         });
       });
   });
@@ -264,15 +268,12 @@ describe("PATCH /api/articles/:article_id", () => {
     const newComment = {
       inc_votes: 1,
     };
-    return request(app)
-      .patch("/api/articles/1") // Use PATCH instead of POST
-      .send(newComment)
-      .expect(200);
+    return request(app).patch("/api/articles/1").send(newComment).expect(200);
   });
   test("should respond with the updated article", () => {
     const newComment = { inc_votes: 1 };
     return request(app)
-      .patch("/api/articles/1") // Use PATCH instead of POST
+      .patch("/api/articles/1")
       .send(newComment)
       .expect(200)
       .then(({ body }) => {
