@@ -460,14 +460,14 @@ describe("GET /api/articles (sorting queries)", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-   test("status:400, responds with an error message when articles does not exist", () => {
-     const sort_query = "created_at";
-     const order = "bad order";
-     return request(app)
-       .get(`/api/articles?sort_by=${sort_query}&order=${order}`)
-       .expect(400)
-       .then(({ body }) => {
-         expect(body.msg).toBe("Invalid input");
-       });
-   });
+  test("status:400, responds with an error message when articles does not exist", () => {
+    const sort_query = "created_at";
+    const order = "bad order";
+    return request(app)
+      .get(`/api/articles?sort_by=${sort_query}&order=${order}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
 });

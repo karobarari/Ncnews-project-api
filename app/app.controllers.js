@@ -35,10 +35,7 @@ exports.getArticle = (req, res, next) => {
     .then((articles) => {
       res.status(200).send({ articles });
     })
-    .catch((err) => {
-      console.log(err, "---------------------");
-      next(err)
-    });
+    .catch(next);
 };
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;

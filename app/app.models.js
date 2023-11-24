@@ -21,7 +21,7 @@ exports.selectTopics = () => {
     return result.rows;
   });
 };
-exports.selectArticle = (topic,sort_by='created_at',order='DESC') => {
+exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
   const validTopics = ["mitch", "cats", "paper"];
 
   if (topic && !validTopics.includes(topic)) {
