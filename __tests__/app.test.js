@@ -64,10 +64,11 @@ describe("GET /api/articles/:article_id", () => {
   });
   test("should response with an article object, which should have the expected properties", () => {
     return request(app)
-      .get("/api/articles/4")
+      .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toMatchObject({
+        const { article } = body;
+        expect(article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),
@@ -96,7 +97,6 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
-
 describe("GET /api/articles", () => {
   test("should be available on /api/articles", () => {
     return request(app).get("/api/articles").expect(200);
@@ -117,7 +117,6 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String),
           });
         });
       });
@@ -371,7 +370,7 @@ describe("GET /api/users", () => {
       });
   });
 });
-describe("GET /api/articles", () => {
+describe("GET /api/articles topic query", () => {
   test("should be available on /api/articles?topic=mitch", () => {
     return request(app).get("/api/articles?topic=mitch").expect(200);
   });
@@ -413,6 +412,19 @@ describe("GET /api/articles", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.error).toBe("not found!");
+      });
+  });
+});
+describe("GET /api/articles comment count", () => {
+  test("should response includes comment count key", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          comment_count: expect.any(String),
+        });
       });
   });
 });
