@@ -59,21 +59,6 @@ exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
     return result.rows;
   });
 };
-
-exports.selectArticlesById = (article_id) => {
-  let queryValue = [];
-  let queryString = `
-  SELECT *
-  FROM articles
-  WHERE article_id = $1;`;
-  if (article_id) {
-    queryValue.push(article_id);
-  }
-
-  return db.query(queryString, queryValue).then((result) => {
-    return result.rows[0];
-  });
-};
 exports.selectArticlesById = (article_id) => {
   const queryValue = [article_id];
   const queryString = `
@@ -165,5 +150,23 @@ exports.selectUsers = () => {
 
   return db.query(queryString).then((result) => {
     return result.rows;
+  });
+};
+exports.selectUserByUsername = (username) => {
+  let queryValue = [];
+  let queryString = `
+    SELECT *
+    FROM users
+    WHERE username = $1;`;
+
+  if (username) {
+    queryValue.push(username);
+  }
+
+  return db.query(queryString, queryValue).then((result) => {
+     if (result.rows.length === 0) {
+       return Promise.reject({ status: 404, msg: "not found!" });
+     }
+    return result.rows[0];
   });
 };
