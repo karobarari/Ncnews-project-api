@@ -21,7 +21,7 @@ exports.selectTopics = () => {
     return result.rows;
   });
 };
-exports.selectArticle = (topic) => {
+exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
   const validTopics = ["mitch", "cats", "paper"];
 
   if (topic && !validTopics.includes(topic)) {
@@ -44,13 +44,12 @@ exports.selectArticle = (topic) => {
   const queryValues = [];
 
   if (topic) {
-    queryString += `WHERE articles.topic = $1`;
+    queryString += `WHERE articles.topic = $1 `;
     queryValues.push(topic);
   }
-
   queryString += `
     GROUP BY articles.article_id
-    ORDER BY created_at DESC
+    ORDER BY ${sort_by} ${order}
   `;
 
   return db.query(queryString, queryValues).then((result) => {

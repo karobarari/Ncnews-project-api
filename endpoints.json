@@ -87,5 +87,8 @@
         }
       ]
     }
+  },
+  "GET /api/articles (sorting queries)": {
+    "description": "serves an array of all articles sorted by expected column in expected order"
   }
 }

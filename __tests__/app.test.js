@@ -164,7 +164,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("status:404, responds with an error message when user id does not exist", () => {
+  test("status:404, responds with an error message when article id does not exist", () => {
     return request(app)
       .get("/api/articles/9999/comments")
       .expect(404)
@@ -415,7 +415,7 @@ describe("GET /api/articles topic query", () => {
       });
   });
 });
-describe("GET /api/articles comment count", () => {
+describe("GET /api/articles (comment count)", () => {
   test("should response includes comment count key", () => {
     return request(app)
       .get("/api/articles/1")
@@ -425,6 +425,49 @@ describe("GET /api/articles comment count", () => {
         expect(article).toMatchObject({
           comment_count: expect.any(String),
         });
+      });
+  });
+});
+describe("GET /api/articles (sorting queries)", () => {
+  test("should response articles in expected order", () => {
+    const sort_query = "created_at";
+    return request(app)
+      .get(`/api/articles?sort_by=${sort_query}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy(sort_query, { descending: true });
+      });
+  });
+  test("should response articles in expected order", () => {
+    const sort_query = "created_at";
+    const order = "ASC";
+    return request(app)
+      .get(`/api/articles?sort_by=${sort_query}&order=${order}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy(sort_query);
+      });
+  });
+  test("status:400, responds with an error message when articles does not exist", () => {
+    const sort_query = "bad sort";
+    const order = "ASC";
+    return request(app)
+      .get(`/api/articles?sort_by=${sort_query}&order=${order}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:400, responds with an error message when articles does not exist", () => {
+    const sort_query = "created_at";
+    const order = "bad order";
+    return request(app)
+      .get(`/api/articles?sort_by=${sort_query}&order=${order}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
       });
   });
 });
