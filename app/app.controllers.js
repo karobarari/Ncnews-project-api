@@ -9,6 +9,7 @@ const {
   removeComment,
   selectUsers,
   selectUserByUsername,
+  updateCommentsVotes,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -72,14 +73,12 @@ exports.postComment = (req, res, next) => {
     });
 };
 
-exports.patchComment = (req, res, next) => {
+exports.patchArticle = (req, res, next) => {
   const { body, params } = req;
 
-  const passedComment = body;
-  passedComment.article_id = params.article_id;
-
-  // Call the correct function
-  updateArticleVotes(passedComment)
+  const passedArticle = body;
+  passedArticle.article_id = params.article_id;
+  updateArticleVotes(passedArticle)
     .then((updatedArticle) => {
       res.status(200).send({ updatedArticle });
     })
@@ -105,11 +104,26 @@ exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 exports.getUserByUsername = (req, res, next) => {
-  
   const { username } = req.params;
-  selectUserByUsername(username).then((user) => {
-    res.status(200).send({user});
-  }).catch((err)=>{
-    next(err)
-  })
+  selectUserByUsername(username)
+    .then((user) => {
+      res.status(200).send({ user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchComment = (req, res, next) => {
+  const { body, params } = req;
+
+  const passedComment = body;
+  passedComment.comment_id = params.comment_id;
+  updateCommentsVotes(passedComment)
+    .then((updatedComment) => {
+      res.status(200).send({ updatedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

@@ -109,8 +109,8 @@ exports.createComment = (comment) => {
     });
 };
 
-exports.updateArticleVotes = (comment) => {
-  const { inc_votes, article_id } = comment;
+exports.updateArticleVotes = (article) => {
+  const { inc_votes, article_id } = article;
   return db
     .query(
       `UPDATE articles
@@ -164,9 +164,26 @@ exports.selectUserByUsername = (username) => {
   }
 
   return db.query(queryString, queryValue).then((result) => {
-     if (result.rows.length === 0) {
-       return Promise.reject({ status: 404, msg: "not found!" });
-     }
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found!" });
+    }
     return result.rows[0];
   });
+};
+exports.updateCommentsVotes = (comment) => {
+  const { inc_votes, comment_id } = comment;
+  return db
+    .query(
+      `UPDATE comments
+       SET votes = votes + $1
+       WHERE comment_id = $2
+       RETURNING *;`,
+      [inc_votes, comment_id]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "not found!" });
+      }
+      return result.rows[0];
+    });
 };
