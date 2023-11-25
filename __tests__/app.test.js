@@ -265,16 +265,16 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 describe("PATCH /api/articles/:article_id", () => {
   test("should respond with 200", () => {
-    const newComment = {
+    const newArticle = {
       inc_votes: 1,
     };
-    return request(app).patch("/api/articles/1").send(newComment).expect(200);
+    return request(app).patch("/api/articles/1").send(newArticle).expect(200);
   });
   test("should respond with the updated article", () => {
-    const newComment = { inc_votes: 1 };
+    const newArticle = { inc_votes: 1 };
     return request(app)
       .patch("/api/articles/1")
-      .send(newComment)
+      .send(newArticle)
       .expect(200)
       .then(({ body }) => {
         const { updatedArticle } = body;
@@ -290,34 +290,34 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
   test("status:400, responds with an error message when passed no update parameter", () => {
-    const newComment = {};
+    const newArticle = {};
     return request(app)
       .patch("/api/articles/1") // Use PATCH instead of POST
-      .send(newComment)
+      .send(newArticle)
       .expect(400);
   });
   test("status:400, responds with an error message when passed NaN", () => {
-    const newComment = { inc_votes: "NotValid" };
+    const newArticle = { inc_votes: "NotValid" };
     return request(app)
       .patch("/api/articles/1") //
-      .send(newComment)
+      .send(newArticle)
       .expect(400);
   });
-  test("status:400, responds with an error message when passed a bad user ID", () => {
-    const newComment = { inc_votes: 1 };
+  test("status:400, responds with an error message when passed a bad article ID", () => {
+    const newArticle = { inc_votes: 1 };
     return request(app)
-      .patch("/api/articles/NaN") // Use PATCH instead of POST
-      .send(newComment)
+      .patch("/api/articles/NaN")
+      .send(newArticle)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid input");
       });
   });
   test("status:404, responds with an error message when article id does not exist", () => {
-    const newComment = { inc_votes: 1 };
+    const newArticle = { inc_votes: 1 };
     return request(app)
-      .patch("/api/articles/9999") // Use PATCH instead of POST
-      .send(newComment)
+      .patch("/api/articles/9999")
+      .send(newArticle)
       .expect(404)
       .then(({ body }) => {
         expect(body.error).toBe("not found!");
@@ -492,6 +492,57 @@ describe("GET /api/users/:username", () => {
   test("status:404, responds with an error message when user id does not exist", () => {
     return request(app)
       .get("/api/users/noSuchUsername")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.error).toBe("not found!");
+      });
+  });
+});
+describe("PATCH /api/comments/:comment_id", () => {
+  test("should be available on /api/comments/:comment_id", () => {
+    let newComment = { inc_votes: 1 };
+    return request(app).patch("/api/comments/1").send(newComment).expect(200);
+  });
+  test("should accepts an object in the form newVote and update the comments votes by new vote value and returns the updated comment", () => {
+    let newComment = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newComment)
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedComment } = body;
+        expect(updatedComment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+          author: expect.any(String),
+          votes: 17,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("status:400, responds with an error message when passed invalid object format", () => {
+    const newComment = { inc_votes: "NotValid" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newComment)
+      .expect(400);
+  });
+  test("status:400, responds with an error message when passed a bad article ID", () => {
+    const newComment = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/NaN")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when article id does not exist", () => {
+    const newComment = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/9999")
+      .send(newComment)
       .expect(404)
       .then(({ body }) => {
         expect(body.error).toBe("not found!");
