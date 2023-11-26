@@ -10,6 +10,7 @@ const {
   selectUsers,
   selectUserByUsername,
   updateCommentsVotes,
+  createArticle,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -122,6 +123,16 @@ exports.patchComment = (req, res, next) => {
   updateCommentsVotes(passedComment)
     .then((updatedComment) => {
       res.status(200).send({ updatedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.postArticle = (req, res, next) => {
+  const { body } = req;
+  createArticle(body)
+    .then((postedArticle) => {
+      res.status(201).send({postedArticle});
     })
     .catch((err) => {
       next(err);

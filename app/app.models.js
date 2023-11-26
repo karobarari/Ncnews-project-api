@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const fs = require("fs");
+const { values } = require("../db/data/test-data/articles");
 
 exports.readEndpoints = (callback) => {
   fs.readFile(`${__dirname}/../endpoints.json`, "utf-8", (err, data) => {
@@ -186,4 +187,31 @@ exports.updateCommentsVotes = (comment) => {
       }
       return result.rows[0];
     });
+};
+exports.createArticle = (article) => {
+  const { title, topic, author, body, article_img_url } = article;
+  const inserting = db
+    .query(
+      `INSERT INTO articles (title, topic, author, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [title, topic, author, body, article_img_url]
+    )
+    
+    const commentCounting = inserting.then((result) => {
+      const insertedArticle = result.rows[0];
+      return db.query(
+        `SELECT COUNT(author) AS comment_count FROM comments WHERE article_id = $1`,
+        [insertedArticle.article_id]
+      );
+    });
+return Promise.all([inserting, commentCounting]).then(
+  ([insertResult, commentResult]) => {
+    const insertedArticle = insertResult.rows[0];
+    const commentCount = commentResult.rows[0].comment_count;
+
+    return {
+      ...insertedArticle,
+      comment_count: commentCount,
+    };
+  }
+);
 };
