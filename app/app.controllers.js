@@ -33,13 +33,14 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getArticle = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
-  selectArticle(topic, sort_by, order)
+  const { topic, sort_by, order, limit, p } = req.query;
+  selectArticle(topic, sort_by, order, p, limit)
     .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch(next);
 };
+
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   selectArticlesById(article_id)

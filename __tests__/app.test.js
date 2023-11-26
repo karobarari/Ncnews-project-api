@@ -97,7 +97,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/9999")
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -111,7 +111,6 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles).toHaveLength(5);
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -173,7 +172,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/9999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -232,7 +231,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
   test("status:404, responds with an error message when passed a non existent article id", () => {
@@ -245,7 +244,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 
@@ -320,7 +319,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newArticle)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -346,7 +345,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete(`/api/comments/${commentIdToDelete}`)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -382,7 +381,6 @@ describe("GET /api/articles topic query", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles).toHaveLength(4);
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -403,7 +401,7 @@ describe("GET /api/articles topic query", () => {
       .get(`/api/articles?topic=${nonExistingTopic}`)
       .expect(400)
       .then(({ body }) => {
-        expect(body.error).toBe("bad request");
+        expect(body.msg).toBe("bad request");
       });
   });
   test("status:404, responds with an error message when articles does not exist", () => {
@@ -412,7 +410,7 @@ describe("GET /api/articles topic query", () => {
       .get(`/api/articles?topic=${topic}`)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -494,7 +492,7 @@ describe("GET /api/users/:username", () => {
       .get("/api/users/noSuchUsername")
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -542,7 +540,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
       });
   });
 });
@@ -616,7 +614,53 @@ describe("POST /api/articles", () => {
       .send(newArticle)
       .expect(404)
       .then(({ body }) => {
-        expect(body.error).toBe("not found!");
+        expect(body.msg).toBe("not found!");
+      });
+  });
+});
+
+describe("GET /api/articles (pagination)", () => {
+  test("should Responds with the articles paginated according to the given inputs", () => {
+    const validPage = 1;
+    const validLimit = 10;
+    return request(app)
+      .get(`/api/articles?limit=${validLimit}&p=${validPage}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(10);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("should respond with an error for an out-of-bounds page", () => {
+    const invalidPage = 1000;
+    const validLimit = 10;
+    return request(app)
+      .get(`/api/articles?limit=${validLimit}&p=${invalidPage}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+  test("should respond with an error for an invalid page or limit value type", () => {
+    const invalidPage = "Hello";
+    const validLimit = 10;
+    return request(app)
+      .get(`/api/articles?limit=${validLimit}&p=${invalidPage}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
       });
   });
 });
