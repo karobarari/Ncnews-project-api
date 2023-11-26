@@ -523,10 +523,7 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
   test("status:400, responds with an error message when passed invalid object format", () => {
     const newComment = { inc_votes: "NotValid" };
-    return request(app)
-      .patch("/api/comments/1")
-      .send(newComment)
-      .expect(400);
+    return request(app).patch("/api/comments/1").send(newComment).expect(400);
   });
   test("status:400, responds with an error message when passed a bad article ID", () => {
     const newComment = { inc_votes: 1 };
@@ -543,6 +540,80 @@ describe("PATCH /api/comments/:comment_id", () => {
     return request(app)
       .patch("/api/comments/9999")
       .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.error).toBe("not found!");
+      });
+  });
+});
+describe("POST /api/articles", () => {
+  const newArticle = {
+    title: "Posting new comment test",
+    topic: "cats",
+    author: "icellusedkars",
+    body: "this comment is for testing proposes",
+    article_img_url:
+      "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+  };
+  test("should be available on /api/articles", () => {
+    return request(app).post("/api/articles").send(newArticle).expect(201);
+  });
+  test("should Responds with the newly added article, with all the expected properties", () => {
+    const newArticle = {
+      title: "Posting new comment test",
+      topic: "cats",
+      author: "icellusedkars",
+      body: "this comment is for testing proposes",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        const { postedArticle } = body;
+        expect(postedArticle).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        });
+      });
+  });
+  test("status:400, responds with an error message when passed unappropriated object format", () => {
+    const newArticle = {
+      title: "Posting new comment test",
+      author: "icellusedkars",
+      body: "this comment is for testing proposes",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    //missing topic
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when passed a unknown author", () => {
+    const newArticle = {
+      title: "Posting new comment test",
+      topic: "cats",
+      author: "Karo",
+      body: "this comment is for testing proposes",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
       .expect(404)
       .then(({ body }) => {
         expect(body.error).toBe("not found!");
