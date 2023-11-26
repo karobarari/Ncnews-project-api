@@ -7,7 +7,7 @@ exports.handleNotFoundError = (err, req, res, next) => {
   const { status, msg } = err;
 
   if (err.code === "23503" || status) {
-    res.status(status || 404).send({ error: msg || "not found!" });
+    res.status(status || 404).send({ msg: msg || "not found!" });
   } else {
     next(err);
   }

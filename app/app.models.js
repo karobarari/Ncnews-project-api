@@ -21,13 +21,19 @@ exports.selectTopics = () => {
   return db.query(queryString).then((result) => {
     return result.rows;
   });
-};
-exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
+};exports.selectArticle = (
+  topic = "mitch",
+  sort_by = "created_at",
+  order = "DESC",
+  p = 1,
+  limit = 10
+) => {
   const validTopics = ["mitch", "cats", "paper"];
 
   if (topic && !validTopics.includes(topic)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
+
   let queryString = `
     SELECT 
       articles.author,
@@ -39,7 +45,7 @@ exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
       articles.article_img_url,
       COUNT(comments.author) AS comment_count
     FROM articles
-    JOIN comments ON articles.article_id = comments.article_id
+    LEFT JOIN comments ON articles.article_id = comments.article_id
   `;
 
   const queryValues = [];
@@ -48,10 +54,19 @@ exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
     queryString += `WHERE articles.topic = $1 `;
     queryValues.push(topic);
   }
+
   queryString += `
     GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order}
   `;
+
+  const offset = (p - 1) * limit;
+
+  queryString += `
+    LIMIT $${queryValues.length + 1}
+    OFFSET $${queryValues.length + 2}
+  `;
+  queryValues.push(limit, offset);
 
   return db.query(queryString, queryValues).then((result) => {
     if (result.rows.length === 0) {
@@ -60,6 +75,9 @@ exports.selectArticle = (topic, sort_by = "created_at", order = "DESC") => {
     return result.rows;
   });
 };
+
+
+
 exports.selectArticlesById = (article_id) => {
   const queryValue = [article_id];
   const queryString = `
