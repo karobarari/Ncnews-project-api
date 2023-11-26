@@ -28,5 +28,4 @@ app.use(handleNotFoundError);
 app.use(handleInvalidParamError);
 app.use(handleServerErrors); //last in the order
 
-app.listen(9090);
 module.exports = app;
