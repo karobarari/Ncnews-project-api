@@ -1,16 +1,16 @@
 const express = require("express");
-const articlesRouter = require("./Router/articlesRouter");
-const topicRouter = require("./Router/topicRouter");
-const commentsRouter = require("./Router/commentsRouter");
-const usersRouter = require("./Router/usersRouter");
-const apiDescriptionRouter = require("./Router/apiDescribtionRouter");
+const articlesRouter = require("./app/Router/articlesRouter");
+const topicRouter = require("./app/Router/topicRouter");
+const commentsRouter = require("./app/Router/commentsRouter");
+const usersRouter = require("./app/Router/usersRouter");
+const apiDescriptionRouter = require("./app/Router/apiDescribtionRouter");
 
 const {
   handleNotFoundError,
   handleServerErrors,
   handleInvalidParamError,
   handleNotARouteError,
-} = require("./errors");
+} = require("./app/errors");
 
 const app = express();
 app.use(express.json());
