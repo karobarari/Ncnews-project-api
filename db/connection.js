@@ -13,6 +13,6 @@ const config = { password: "8-6GJG-PdNjecigK_amH_T8oXlv7Shf6" };
 if (ENV === "production") {
   config.connectionString = process.env.DATABASE_URL;
   config.max = 2;
-}
+} 
 
 module.exports = new Pool(config);
