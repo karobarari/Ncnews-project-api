@@ -21,7 +21,8 @@ exports.selectTopics = () => {
   return db.query(queryString).then((result) => {
     return result.rows;
   });
-};exports.selectArticle = (
+};
+exports.selectArticle = (
   topic = "mitch",
   sort_by = "created_at",
   order = "DESC",
@@ -76,8 +77,6 @@ exports.selectTopics = () => {
   });
 };
 
-
-
 exports.selectArticlesById = (article_id) => {
   const queryValue = [article_id];
   const queryString = `
@@ -96,18 +95,23 @@ exports.selectArticlesById = (article_id) => {
     return result.rows[0];
   });
 };
-
-exports.selectComment = (article_id, order = "ASC", sort_by = "created_at") => {
-  queryString = `SELECT * FROM comments`;
-  queryValue = [];
+exports.selectComment = (article_id, page = 1, limit = 10) => {
+  console.log(limit, "---------------------");
+  let queryString = `SELECT * FROM comments`;
+  let queryValues = [];
 
   if (article_id) {
-    queryString += ` WHERE article_id = ${article_id} 
-    ORDER BY ${sort_by} ${order}
-`;
+    queryString += ` WHERE article_id = $1 
+    ORDER BY created_at ASC`;
+    queryValues.push(article_id);
+
+    const offset = (page - 1) * limit;
+    queryString += ` LIMIT $${queryValues.length + 1}
+    OFFSET $${queryValues.length + 2}`;
+    queryValues.push(limit, offset);
   }
 
-  return db.query(queryString).then((result) => {
+  return db.query(queryString, queryValues).then((result) => {
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "not found!" });
     }
@@ -208,28 +212,27 @@ exports.updateCommentsVotes = (comment) => {
 };
 exports.createArticle = (article) => {
   const { title, topic, author, body, article_img_url } = article;
-  const inserting = db
-    .query(
-      `INSERT INTO articles (title, topic, author, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [title, topic, author, body, article_img_url]
-    )
-    
-    const commentCounting = inserting.then((result) => {
-      const insertedArticle = result.rows[0];
-      return db.query(
-        `SELECT COUNT(author) AS comment_count FROM comments WHERE article_id = $1`,
-        [insertedArticle.article_id]
-      );
-    });
-return Promise.all([inserting, commentCounting]).then(
-  ([insertResult, commentResult]) => {
-    const insertedArticle = insertResult.rows[0];
-    const commentCount = commentResult.rows[0].comment_count;
+  const inserting = db.query(
+    `INSERT INTO articles (title, topic, author, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [title, topic, author, body, article_img_url]
+  );
 
-    return {
-      ...insertedArticle,
-      comment_count: commentCount,
-    };
-  }
-);
+  const commentCounting = inserting.then((result) => {
+    const insertedArticle = result.rows[0];
+    return db.query(
+      `SELECT COUNT(author) AS comment_count FROM comments WHERE article_id = $1`,
+      [insertedArticle.article_id]
+    );
+  });
+  return Promise.all([inserting, commentCounting]).then(
+    ([insertResult, commentResult]) => {
+      const insertedArticle = insertResult.rows[0];
+      const commentCount = commentResult.rows[0].comment_count;
+
+      return {
+        ...insertedArticle,
+        comment_count: commentCount,
+      };
+    }
+  );
 };

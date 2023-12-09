@@ -51,10 +51,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getCommentsByArticle = (req, res, next) => {
+  const { page, limit } = req.query;
   const { article_id } = req.params;
-  selectComment(article_id)
-    .then((article) => {
-      res.status(200).send({ article });
+  selectComment(article_id, page, limit)
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch((err) => {
       next(err);

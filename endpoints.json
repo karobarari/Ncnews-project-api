@@ -41,7 +41,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments",
-    "queries": [],
+    "queries": ["page","limit"],
     "exampleResponse": {
       "comment_id": 18,
       "body": "This morning, I showered for nine minutes.",
@@ -93,23 +93,6 @@
       ]
     }
   },
-  "GET /api/articles (sorting queries)": {
-    "description": "serves an array of all articles sorted by expected column in expected order",
-    "queries": [],
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
-        }
-      ]
-    }
-  },
   "GET /api/users/:username": {
     "description": "serves the required user object",
     "queries": [],
@@ -117,6 +100,18 @@
       "username": "rogersop",
       "name": "paul",
       "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+    }
+  },
+  "PATCH /api/comments/:comment_id":{
+    "description": "updating the comment votes",
+    "queries": [],
+    "exampleResponse":{
+      "comment_id": 18,
+      "body": "This morning, I showered for nine minutes.",
+      "article_id": 1,
+      "author": "butter_bridge",
+      "votes": 16,
+      "created_at": "2020-07-21T00:20:00.000Z"
     }
   },
   "POST /api/articles": {
@@ -133,19 +128,5 @@
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
       "comment_count": "0"
     }
-  },
-  "GET /api/articles (pagination)": {
-    "description": "paginates the returned articles according to given page and limit values",
-    "queries": [],
-    "exampleResponse": [
-      {
-        "title": "Another article about Mitch",
-        "topic": "mitch",
-        "author": "butter_bridge",
-        "body": "There will never be enough articles about Mitch!",
-        "created_at": 1602419040000,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-      }
-    ]
   }
 }

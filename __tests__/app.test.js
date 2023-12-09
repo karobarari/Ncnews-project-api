@@ -1,4 +1,4 @@
-const app = require("../app/app.js");
+const app = require("../app.js");
 const request = require("supertest");
 const seed = require("../db/seeds/seed.js");
 const db = require("../db/connection.js");
@@ -144,9 +144,8 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        const { article } = body;
-        expect(article).toHaveLength(11);
-        expect(article).toBeSortedBy("created_at");
+        const { comment } = body;
+        expect(comment).toBeSortedBy("created_at");
       });
   });
   test("should response with an array of comments for the given article_id of which each comment should have the expected properties", () => {
@@ -154,9 +153,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/9/comments")
       .expect(200)
       .then(({ body }) => {
-        const { article } = body;
-        expect(article).toHaveLength(2);
-        expect(article).toBeSortedBy("created_at");
+        const { comment } = body;
+        expect(comment).toHaveLength(2);
+        expect(comment).toBeSortedBy("created_at");
       });
   });
   test("status:400, responds with an error message when passed a bad user ID", () => {
@@ -660,6 +659,57 @@ describe("GET /api/articles (pagination)", () => {
       .get(`/api/articles?limit=${validLimit}&p=${invalidPage}`)
       .expect(400)
       .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments (pagination)", () => {
+  test("be available on /api/articles/:article_id/comments", () => {
+    const validPage = 1;
+    const validLimit = 10;
+    return request(app)
+      .get(`/api/articles/5/comments?limit=${validLimit}&page=${validPage}`)
+      .expect(200);
+  });
+  test("be available on /api/articles/:article_id/comments", () => {
+    const validPage = 1;
+    const validLimit = 10;
+    return request(app)
+      .get(`/api/articles/1/comments?limit=${validLimit}&page=${validPage}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toHaveLength(10);
+        comment.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+      });
+  });
+  test("should respond with an error for an out-of-bounds page", () => {
+    const invalidPage = 1000;
+    const validLimit = 10;
+    return request(app)
+      .get(`/api/articles/1/comments?limit=${validLimit}&page=${invalidPage}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
+      });
+  });
+  test("should respond with an error for an invalid page or limit value type", () => {
+    const validPage = 1;
+    const invalidLimit = "hello";
+    return request(app)
+      .get(`/api/articles/1/comments?limit=${invalidLimit}&page=${validPage}`)
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
         expect(body.msg).toBe("Invalid input");
       });
   });

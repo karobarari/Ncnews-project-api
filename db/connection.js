@@ -8,7 +8,7 @@ if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
   throw new Error("PGDATABASE or DATABASE_URL not set");
 }
 
-const config = { password: "8-6GJG-PdNjecigK_amH_T8oXlv7Shf6" };
+const config = { password: "karokaro" };
 
 if (ENV === "production") {
   config.connectionString = process.env.DATABASE_URL;
