@@ -96,7 +96,6 @@ exports.selectArticlesById = (article_id) => {
   });
 };
 exports.selectComment = (article_id, page = 1, limit = 10) => {
-  console.log(limit, "---------------------");
   let queryString = `SELECT * FROM comments`;
   let queryValues = [];
 
@@ -235,4 +234,37 @@ exports.createArticle = (article) => {
       };
     }
   );
+};
+
+exports.createTopic = (slug, description) => {
+  return db
+    .query(
+      `INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING *;`,
+      [slug, description]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+exports.removeArticle = (articleId) => {
+  return db
+    .query(
+      `DELETE FROM comments
+   WHERE article_id = $1`,
+      [articleId]
+    )
+    .then(() => {
+      return db.query(
+        `DELETE FROM articles
+       WHERE article_id = $1
+       RETURNING *`,
+        [articleId]
+      );
+    })
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "not found!" });
+      }
+      return result.rows[0];
+    });
 };

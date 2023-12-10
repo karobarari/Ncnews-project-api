@@ -11,6 +11,8 @@ const {
   selectUserByUsername,
   updateCommentsVotes,
   createArticle,
+  createTopic,
+  removeArticle,
 } = require("./app.models");
 
 exports.apiDescription = (req, res, next) => {
@@ -134,9 +136,25 @@ exports.postArticle = (req, res, next) => {
   const { body } = req;
   createArticle(body)
     .then((postedArticle) => {
-      res.status(201).send({postedArticle});
+      res.status(201).send({ postedArticle });
     })
     .catch((err) => {
       next(err);
     });
+};
+exports.postTopic = (req, res, next) => {
+  const { slug, description } = req.body;
+  createTopic(slug, description)
+    .then((postedTopic) => {
+      res.status(201).send({ postedTopic });
+    })
+    .catch(next);
+};
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticle(article_id).then(() => {
+    res.status(204).send();
+  }).catch((err=>{
+    next(err)
+  }))
 };

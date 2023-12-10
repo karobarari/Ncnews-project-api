@@ -709,8 +709,64 @@ describe("GET /api/articles/:article_id/comments (pagination)", () => {
       .get(`/api/articles/1/comments?limit=${invalidLimit}&page=${validPage}`)
       .expect(400)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("Invalid input");
+      });
+  });
+});
+describe("POST /api/topics", () => {
+  test("Should be available on /api/topics", () => {
+    const topic = { slug: "test slug", description: "test description" };
+    return request(app).post("/api/topics").send(topic).expect(201);
+  });
+  test("Should be available on /api/topics", () => {
+    const topic = { slug: "test slug", description: "test description" };
+    return request(app)
+      .post("/api/topics")
+      .send(topic)
+      .expect(201)
+      .then(({ body }) => {
+        const { postedTopic } = body;
+        expect(postedTopic).toMatchObject({
+          slug: expect.any(String),
+          description: expect.any(String),
+        });
+      });
+  });
+  test("status:400, responds with an error message when passed unappropriated object format", () => {
+    const topic = { description: "test description" }; //mising slug
+
+    return request(app)
+      .post("/api/topics")
+      .send(topic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+});
+describe("DELETE /api/articles/:article_id", () => {
+  test("should delete the expected article by its article_id and respond with status 204 and no content", () => {
+    const articleIdToDelete = 6;
+    return request(app)
+      .delete(`/api/articles/1`)
+      .expect(204);
+  });
+  test("status:400, responds with an error message when passed a bad article ID", () => {
+    const articleIdToDelete = "NaN";
+    return request(app)
+      .delete(`/api/articles/${articleIdToDelete}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:404, responds with an error message when article id does not exist", () => {
+    const articleIdToDelete = 111111;
+    return request(app)
+      .delete(`/api/articles/${articleIdToDelete}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found!");
       });
   });
 });
