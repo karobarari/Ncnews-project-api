@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const articlesRouter = require("./app/Router/articlesRouter");
 const topicRouter = require("./app/Router/topicRouter");
 const commentsRouter = require("./app/Router/commentsRouter");
@@ -14,6 +15,8 @@ const {
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+
 
 app.use("/api/articles", articlesRouter);
 app.use("/api/topics", topicRouter);
