@@ -4,7 +4,6 @@ exports.handleNotARouteError = (req, res, next) => {
   next(error);
 };
 exports.handleNotFoundError = (err, req, res, next) => {
-  console.log(err,'---------------------');
   const { status, msg } = err;
 
   if (err.code === "23503" || status) {
@@ -26,6 +25,5 @@ exports.handleInvalidParamError = (err, req, res, next) => {
 };
 
 exports.handleServerErrors = (err, req, res, next) => {
-   console.log(err,'---------------------');
   res.status(500).send({ msg: "Internal Server Error!" });
 };

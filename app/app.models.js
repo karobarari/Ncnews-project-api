@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 const fs = require("fs");
 const { values } = require("../db/data/test-data/articles");
-
+let validTopics = [];
 exports.readEndpoints = (callback) => {
   fs.readFile(`${__dirname}/../endpoints.json`, "utf-8", (err, data) => {
     if (err) {
@@ -19,17 +19,22 @@ exports.selectTopics = () => {
   FROM topics;`;
 
   return db.query(queryString).then((result) => {
+result.rows.map((result)=>{
+  validTopics.push(result.slug);
+})
+    
+
     return result.rows;
   });
 };
+
 exports.selectArticle = (
-  topic ,
+  topic,
   sort_by = "created_at",
   order = "DESC",
   p = 1,
   limit = 10
 ) => {
-  const validTopics = ["mitch", "cats", "paper"];
 
   if (topic && !validTopics.includes(topic)) {
     return Promise.reject({ status: 400, msg: "bad request" });
