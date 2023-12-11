@@ -23,7 +23,7 @@ exports.selectTopics = () => {
   });
 };
 exports.selectArticle = (
-  topic = "mitch",
+  topic ,
   sort_by = "created_at",
   order = "DESC",
   p = 1,
