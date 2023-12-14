@@ -106,7 +106,7 @@ exports.selectComment = (article_id, page = 1, limit = 10) => {
 
   if (article_id) {
     queryString += ` WHERE article_id = $1 
-    ORDER BY created_at ASC`;
+    ORDER BY created_at DESC`;
     queryValues.push(article_id);
 
     const offset = (page - 1) * limit;

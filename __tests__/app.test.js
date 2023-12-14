@@ -145,7 +145,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comment } = body;
-        expect(comment).toBeSortedBy("created_at");
+        expect(comment).toBeSortedBy("created_at", { descending: true });
       });
   });
   test("should response with an array of comments for the given article_id of which each comment should have the expected properties", () => {
@@ -155,7 +155,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const { comment } = body;
         expect(comment).toHaveLength(2);
-        expect(comment).toBeSortedBy("created_at");
+        expect(comment).toBeSortedBy("created_at", { descending: true });
       });
   });
   test("status:400, responds with an error message when passed a bad user ID", () => {
@@ -747,9 +747,7 @@ describe("POST /api/topics", () => {
 describe("DELETE /api/articles/:article_id", () => {
   test("should delete the expected article by its article_id and respond with status 204 and no content", () => {
     const articleIdToDelete = 6;
-    return request(app)
-      .delete(`/api/articles/1`)
-      .expect(204);
+    return request(app).delete(`/api/articles/1`).expect(204);
   });
   test("status:400, responds with an error message when passed a bad article ID", () => {
     const articleIdToDelete = "NaN";
