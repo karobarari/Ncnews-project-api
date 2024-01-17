@@ -1,10 +1,5 @@
-q  1# Northcoders News API
+NC news API
 
-
-
-in order to connect provided Databases you need to create <.env.test> file in for your test environment and <.env.development> for your development environment.
-
-Currently running on NODE 18 & PSQL 14
 
 Welcome to my Northcoders Backend Project!
 
