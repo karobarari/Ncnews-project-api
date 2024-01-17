@@ -1,13 +1,13 @@
 NC news API
 
 
-Welcome to my Northcoders Backend Project!
+Welcome to my NC-news Backend Project!
 
-To follow along with me, you will need to do a few things before getting started.
+To follow along with me, you must do a few things before getting started.
 
-Go to my online repository and create your own fork: https://github.com/karobarari/Ncnews-project-api
+Go to my online repository and create your fork: https://github.com/karobarari/Ncnews-project-api
 
-Then, navigate to your local directory and clone your newly created repo by using the command below.
+Then, you can just navigate to your local directory and clone your newly created repo by using the command below.
 
 git clone <your-repo-name.git>
 
